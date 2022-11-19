@@ -45,11 +45,13 @@ int main(int argc, char **argv)
     // Retrieve paths to images
     vector<string> vstrImageFilenames;
     vector<double> vTimestamps;
+    //* 返回图片和时间戳
     LoadImages(string(argv[3]), vstrImageFilenames, vTimestamps);
 
     int nImages = vstrImageFilenames.size();
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
+    //* 初始化单目SLAM和线程
     ORB_SLAM2::System SLAM(argv[1],argv[2],ORB_SLAM2::System::MONOCULAR,true);
 
     // Vector for tracking time statistics
@@ -65,6 +67,7 @@ int main(int argc, char **argv)
     for(int ni=0; ni<nImages; ni++)
     {
         // Read image from file
+        //* CV_LOAD_IMAGE_UNCHANGED:通道数不变,每个像素位深8bit
         im = cv::imread(vstrImageFilenames[ni],CV_LOAD_IMAGE_UNCHANGED);
         double tframe = vTimestamps[ni];
 
@@ -96,6 +99,7 @@ int main(int argc, char **argv)
         // Wait to load the next frame
         double T=0;
         if(ni<nImages-1)
+            //* 两帧图片实际的间隔时间,如果SLAM处理得快就等待
             T = vTimestamps[ni+1]-tframe;
         else if(ni>0)
             T = tframe-vTimestamps[ni-1];
@@ -128,13 +132,16 @@ void LoadImages(const string &strPathToSequence, vector<string> &vstrImageFilena
 {
     ifstream fTimes;
     string strPathTimeFile = strPathToSequence + "/times.txt";
+    //* c_str():返回当前字符串的首字符地址 
     fTimes.open(strPathTimeFile.c_str());
+    //* eof():直到文件结束返回真
     while(!fTimes.eof())
     {
         string s;
         getline(fTimes,s);
         if(!s.empty())
         {
+            //* stringstream:好用的数据类型转换和字符串操作
             stringstream ss;
             ss << s;
             double t;
@@ -151,6 +158,7 @@ void LoadImages(const string &strPathToSequence, vector<string> &vstrImageFilena
     for(int i=0; i<nTimes; i++)
     {
         stringstream ss;
+        //* setw():设置字段宽度, 6宽度前面补0
         ss << setfill('0') << setw(6) << i;
         vstrImageFilenames[i] = strPrefixLeft + ss.str() + ".png";
     }
