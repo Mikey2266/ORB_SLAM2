@@ -66,6 +66,7 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
     float cx = fSettings["Camera.cx"];
     float cy = fSettings["Camera.cy"];
 
+    //* 相机内参
     //     |fx  0   cx|
     // K = |0   fy  cy|
     //     |0   0   1 |
@@ -74,6 +75,7 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
     K.at<float>(1,1) = fy;
     K.at<float>(0,2) = cx;
     K.at<float>(1,2) = cy;
+    //* K和mK在数据结构上共用矩阵头
     K.copyTo(mK);
 
     // 图像矫正系数
@@ -84,6 +86,7 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
     DistCoef.at<float>(2) = fSettings["Camera.p1"];
     DistCoef.at<float>(3) = fSettings["Camera.p2"];
     const float k3 = fSettings["Camera.k3"];
+    //* 若yaml没有Camera.k3配置, 默认0
     if(k3!=0)
     {
         DistCoef.resize(5);
@@ -129,6 +132,11 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
     // 每一帧提取的特征点数 1000
     int nFeatures = fSettings["ORBextractor.nFeatures"];
     // 图像建立金字塔时的变化尺度 1.2
+    /* 
+    * 对每一层图片都会提取特征点, 目的:
+    * 1. 特征点提取得更多, 保证特征点尺度不变性(当距离变远, 图片依然能够有足够的特征点)
+    * 2. 当相机后退, 上一个图片金字塔的上层和下一个图片金字塔的下层能够匹配上(P156)
+    */
     float fScaleFactor = fSettings["ORBextractor.scaleFactor"];
     // 尺度金字塔的层数 8
     int nLevels = fSettings["ORBextractor.nLevels"];
