@@ -131,12 +131,12 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
 
     // 每一帧提取的特征点数 1000
     int nFeatures = fSettings["ORBextractor.nFeatures"];
-    // 图像建立金字塔时的变化尺度 1.2
     /* 
     * 对每一层图片都会提取特征点, 目的:
     * 1. 特征点提取得更多, 保证特征点尺度不变性(当距离变远, 图片依然能够有足够的特征点)
     * 2. 当相机后退, 上一个图片金字塔的上层和下一个图片金字塔的下层能够匹配上(P156)
     */
+    // 图像建立金字塔时的变化尺度 1.2
     float fScaleFactor = fSettings["ORBextractor.scaleFactor"];
     // 尺度金字塔的层数 8
     int nLevels = fSettings["ORBextractor.nLevels"];

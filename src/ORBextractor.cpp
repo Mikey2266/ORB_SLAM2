@@ -431,11 +431,12 @@ ORBextractor::ORBextractor(int _nfeatures, float _scaleFactor, int _nlevels,
         mvInvScaleFactor[i]=1.0f/mvScaleFactor[i];
         mvInvLevelSigma2[i]=1.0f/mvLevelSigma2[i];
     }
-
+    //* 共有变量, 外部对象会访问
     mvImagePyramid.resize(nlevels);
 
     mnFeaturesPerLevel.resize(nlevels);
     float factor = 1.0f / scaleFactor;
+    //! ???
     float nDesiredFeaturesPerScale = nfeatures*(1 - factor)/(1 - (float)pow((double)factor, (double)nlevels));
 
     int sumFeatures = 0;
