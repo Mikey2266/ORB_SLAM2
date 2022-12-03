@@ -1243,6 +1243,7 @@ void TemplatedVocabulary<TDescriptor,F>::transform(const TDescriptor &feature,
   WordId &word_id, WordValue &weight, NodeId *nid, int levelsup) const
 { 
   // propagate the feature down the tree
+  //* 沿着树传播特征
   vector<NodeId> nodes;
   typename vector<NodeId>::const_iterator nit;
 

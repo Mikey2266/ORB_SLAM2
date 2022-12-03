@@ -431,38 +431,42 @@ ORBextractor::ORBextractor(int _nfeatures, float _scaleFactor, int _nlevels,
         mvInvScaleFactor[i]=1.0f/mvScaleFactor[i];
         mvInvLevelSigma2[i]=1.0f/mvLevelSigma2[i];
     }
-    //* 共有变量, 外部对象会访问
+    //* 公有变量, 外部对象会访问
     mvImagePyramid.resize(nlevels);
 
     mnFeaturesPerLevel.resize(nlevels);
     float factor = 1.0f / scaleFactor;
-    //! ???
+    //* 金字塔底层需要特征数, 公式为: nfeatures/等比求和
     float nDesiredFeaturesPerScale = nfeatures*(1 - factor)/(1 - (float)pow((double)factor, (double)nlevels));
 
     int sumFeatures = 0;
     for( int level = 0; level < nlevels-1; level++ )
     {
+        //* cvRound四舍五入返回整数
         mnFeaturesPerLevel[level] = cvRound(nDesiredFeaturesPerScale);
         sumFeatures += mnFeaturesPerLevel[level];
         nDesiredFeaturesPerScale *= factor;
     }
+    //* 1000个特征剩余特征
     mnFeaturesPerLevel[nlevels-1] = std::max(nfeatures - sumFeatures, 0);
 
     const int npoints = 512;
     const Point* pattern0 = (const Point*)bit_pattern_31_;
+    //* std::back_inserter()返回尾部插入型迭代器, 拷贝前无需保证pattern长度一致
     std::copy(pattern0, pattern0 + npoints, std::back_inserter(pattern));
 
     //This is for orientation
     // pre-compute the end of a row in a circular patch
     umax.resize(HALF_PATCH_SIZE + 1);
 
+    //! ???
     int v, v0, vmax = cvFloor(HALF_PATCH_SIZE * sqrt(2.f) / 2 + 1);
     int vmin = cvCeil(HALF_PATCH_SIZE * sqrt(2.f) / 2);
     const double hp2 = HALF_PATCH_SIZE*HALF_PATCH_SIZE;
     for (v = 0; v <= vmax; ++v)
         umax[v] = cvRound(sqrt(hp2 - v * v));
 
-    // Make sure we are symmetric
+    // Make sure we are symmetric对称
     for (v = HALF_PATCH_SIZE, v0 = 0; v >= vmin; --v)
     {
         while (umax[v0] == umax[v0 + 1])

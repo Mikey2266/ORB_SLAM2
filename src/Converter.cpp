@@ -27,6 +27,7 @@ namespace ORB_SLAM2
 std::vector<cv::Mat> Converter::toDescriptorVector(const cv::Mat &Descriptors)
 {
     std::vector<cv::Mat> vDesc;
+    //* reserve()给vector一次性申请空间, 提高效率
     vDesc.reserve(Descriptors.rows);
     for (int j=0;j<Descriptors.rows;j++)
         vDesc.push_back(Descriptors.row(j));
