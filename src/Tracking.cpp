@@ -281,6 +281,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,const cv::Mat &imD, const d
     return mCurrentFrame.mTcw.clone();
 }
 
+//* rgba: 在rbg的基础上加了alpha透明度, 取值在0-1之间
 // 输入左目RGB或RGBA图像
 // 1、将图像转为mImGray并初始化mCurrentFrame
 // 2、进行tracking过程
@@ -324,6 +325,7 @@ cv::Mat Tracking::GrabImageMonocular(const cv::Mat &im, const double &timestamp)
  */
 void Tracking::Track()
 {
+    //* 初始化——>相机位姿跟踪——>局部地图跟踪——>关键帧处理——>姿态保存
     // track包含两部分：估计运动、跟踪局部地图
     
     // mState为tracking的状态机
@@ -677,7 +679,7 @@ void Tracking::StereoInitialization()
 
                 // a.表示该MapPoint可以被哪个KeyFrame的哪个特征点观测到
                 pNewMP->AddObservation(pKFini,i);
-                // b.从众多观测到该MapPoint的特征点中挑选区分读最高的描述子
+                // b.从众多观测到该MapPoint的特征点中挑选区分度最高的描述子
                 pNewMP->ComputeDistinctiveDescriptors();
                 // c.更新该MapPoint平均观测方向以及观测距离的范围
                 pNewMP->UpdateNormalAndDepth();

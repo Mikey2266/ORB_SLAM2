@@ -226,6 +226,7 @@ cv::Mat System::TrackMonocular(const cv::Mat &im, const double &timestamp)
 
     // Check mode change
     {
+        //* 在声明周期内对mMutexMode进行上锁操作, 不允许其他线程修改定位模式
         unique_lock<mutex> lock(mMutexMode);
         if(mbActivateLocalizationMode)
         {
@@ -239,6 +240,7 @@ cv::Mat System::TrackMonocular(const cv::Mat &im, const double &timestamp)
             }
 
             mpTracker->InformOnlyTracking(true);// 定位时，只跟踪
+            //! 为什么会重复执行???
             mbActivateLocalizationMode = false;// 防止重复执行
         }
         if(mbDeactivateLocalizationMode)
@@ -376,6 +378,7 @@ void System::SaveKeyFrameTrajectoryTUM(const string &filename)
 
     ofstream f;
     f.open(filename.c_str());
+    //* fixed流操作符, 结合setprecision()设定输出位数
     f << fixed;
 
     for(size_t i=0; i<vpKFs.size(); i++)
@@ -427,6 +430,7 @@ void System::SaveTrajectoryKITTI(const string &filename)
     // which is true when tracking failed (lbL).
     list<ORB_SLAM2::KeyFrame*>::iterator lRit = mpTracker->mlpReferences.begin();
     list<double>::iterator lT = mpTracker->mlFrameTimes.begin();
+    //* mlRelativeFramePoses保存图像帧与参考关键帧之间的变换矩阵
     for(list<cv::Mat>::iterator lit=mpTracker->mlRelativeFramePoses.begin(), lend=mpTracker->mlRelativeFramePoses.end();lit!=lend;lit++, lRit++, lT++)
     {
         ORB_SLAM2::KeyFrame* pKF = *lRit;
@@ -440,8 +444,9 @@ void System::SaveTrajectoryKITTI(const string &filename)
             pKF = pKF->GetParent();
         }
 
+        //* 计算全局坐标系到参考关键帧坐标系变换关系
         Trw = Trw*pKF->GetPose()*Two;
-
+        //* 计算全局坐标系到相机坐标系的变换关系, 注: Tcw是全局坐标系到相机坐标系的变换, Tcw的逆为相机坐标系到全局坐标系的变换
         cv::Mat Tcw = (*lit)*Trw;
         cv::Mat Rwc = Tcw.rowRange(0,3).colRange(0,3).t();
         cv::Mat twc = -Rwc*Tcw.rowRange(0,3).col(3);
