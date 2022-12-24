@@ -554,6 +554,8 @@ void Frame::ComputeStereoMatches()
     // vRowIndices[18]、vRowIndices[19]、vRowIndices[20]、vRowIndices[21]、vRowIndices[22]都有这个特征点编号
     vector<vector<size_t> > vRowIndices(nRows,vector<size_t>());
 
+    //* reserve: 分配空间, 更改capacity但不改变size, 没有创建元素对象, 不能索引, 减少插入元素频繁执行内存分配
+    //* resize: 分配空间, 更改capacity也改变size, 能索引
     for(int i=0; i<nRows; i++)
         vRowIndices[i].reserve(200);
 

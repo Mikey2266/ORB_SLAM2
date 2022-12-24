@@ -325,7 +325,7 @@ cv::Mat Tracking::GrabImageMonocular(const cv::Mat &im, const double &timestamp)
  */
 void Tracking::Track()
 {
-    //* 初始化——>相机位姿跟踪——>局部地图跟踪——>关键帧处理——>姿态保存
+    //* 初始化 -> 相机位姿跟踪 -> 局部地图跟踪 -> 关键帧处理 -> 姿态保存
     // track包含两部分：估计运动、跟踪局部地图
     
     // mState为tracking的状态机

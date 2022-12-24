@@ -246,6 +246,7 @@ cv::Mat System::TrackMonocular(const cv::Mat &im, const double &timestamp)
         if(mbDeactivateLocalizationMode)
         {
             mpTracker->InformOnlyTracking(false);
+            //! 为什么要被释放???
             mpLocalMapper->Release();
             mbDeactivateLocalizationMode = false;// 防止重复执行
         }
@@ -260,7 +261,7 @@ cv::Mat System::TrackMonocular(const cv::Mat &im, const double &timestamp)
             mbReset = false;
         }
     }
-
+    //! 返回后有什么用???
     return mpTracker->GrabImageMonocular(im,timestamp);
 }
 
