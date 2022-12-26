@@ -11,3 +11,6 @@ SLAM.TrackMonocular -> Tracking::GrabImageMonocular -> Tracking::Track -> Tracki
   * 参考关键帧跟踪：匹配方式使用关键帧BOW向量与当前帧进行匹配
   * 重定位：匹配方式是将不包含前2种已匹配过的的局部地图点投影到当前帧进行匹配
 * 5种状态：SYSTME_NOT_READY；NO_IMAGES_YET；NOT_INITIALIZED；OK；LOST
+### Frame::ComputeStereoMatches
+* SAD算法：用于像素块匹配，将2个像素块对应数值之差的绝对值求和来评估相似度
+* 亚像素算法
