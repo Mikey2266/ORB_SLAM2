@@ -1,4 +1,4 @@
-SLAM.TrackMonocular -> Tracking::GrabImageMonocular -> Tracking::Track -> Tracking::MonocularInitialization
+SLAM.TrackMonocular -> Tracking::GrabImageMonocular -> Tracking::Track -> Tracking::MonocularInitialization -> Tracking::TrackLocalMap
 
 ### System::TrackMonocular
 * 如果定位模式被激活，关闭局部建图，只定位；如果定位模式被关闭，之前建立的局部地图被release
@@ -16,3 +16,11 @@ SLAM.TrackMonocular -> Tracking::GrabImageMonocular -> Tracking::Track -> Tracki
 * 亚像素算法
 ### Tracking::MonocularInitialization
 * 连续2帧计算基础矩阵和单应性矩阵，得到2帧的运动初始位姿
+### Tracking::TrackLocalMap
+* 局部地图包括：局部地图关键帧、局部地图地图点
+* 局部地图关键帧：
+  * 能够观测到当前帧地图点的关键帧作为局部地图点关键帧
+  * 如果局部地图关键帧数量不够的话将这些关键帧的共视关键帧、子关键帧、父关键帧也加到局部关键帧中，直到满足数量要求
+  * 将能看到当前帧最多地图点的关键帧设为参考关键帧
+* 局部地图跟踪的目的：得到当前帧的初始位姿之后，根据局部地图中的地图点和当前帧进行匹配，进一步优化当前帧位姿和地图点
+* 更新局部地图点时，需要将之前的局部地图点数据清空
